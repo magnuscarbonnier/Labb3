@@ -9,6 +9,6 @@ namespace Web.Services
     public interface IProductService
     {
         Product GetById(Guid Id);
-        IEnumerable<Product> GetAll();
+        Task<List<Product>> GetAll();
     }
 }
