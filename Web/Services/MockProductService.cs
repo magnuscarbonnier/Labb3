@@ -9,13 +9,13 @@ using Web.Models;
 
 namespace Web.Services
 {
-    public class MockProductService : IProductService
+    public class ProductService : IProductService
     {
         private const string apiaddress = "https://localhost:44307/api/products";
 
         private readonly HttpClient _httpClient;
 
-        public MockProductService(HttpClient httpClient)
+        public ProductService(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
@@ -108,9 +108,23 @@ namespace Web.Services
             return products;
         }
 
-        public Product GetById(Guid id)
+        public async Task<Product> GetById(Guid id)
         {
-            var product = products.FirstOrDefault(x => x.Id == id);
+            Product product = new Product();
+            var request = new HttpRequestMessage(HttpMethod.Get, apiaddress+$"/{id}");
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            using (var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead))
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                response.EnsureSuccessStatusCode();
+
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                };
+                product = JsonSerializer.Deserialize<Product>(content, options);
+            }
             return product;
         }
     }
