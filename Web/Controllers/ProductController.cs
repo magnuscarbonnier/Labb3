@@ -26,10 +26,10 @@ namespace Web.Controllers
             _cartService = cartService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             ProductViewModel vm = new ProductViewModel();
-            var products = _productService.GetAll();
+            var products = await _productService.GetAll();
             vm.Products = products;
             return View(vm);
         }

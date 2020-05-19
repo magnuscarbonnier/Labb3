@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProductService;
-using Web.Models;
+using ProductService.Models;
 
 namespace ProductService.Controllers
 {
