@@ -67,36 +67,36 @@ namespace Web.Controllers
             return RedirectToAction("Index", "Order");
         }
 
-        public IActionResult Remove(Guid Id)
+        public async Task<IActionResult> Remove(Guid Id)
         {
             var userid = _userManager.GetUserId(User);
-            var product = _productService.GetById(Id);
+            var product = await _productService.GetById(Id);
             var message = _cartService.RemoveItem(userid, product, HttpContext.Session);
             if (message == Lib.CartNotUpdated)
                 TempData["Error"] = message;
-             
+
             return RedirectToAction("index");
         }
 
-        public IActionResult Increase(Guid Id)
+        public async Task<IActionResult> Increase(Guid Id)
         {
             var userid = _userManager.GetUserId(User);
-            var product = _productService.GetById(Id);
+            var product = await _productService.GetById(Id);
             var message = _cartService.AddOneItem(userid, product, HttpContext.Session);
             if (message == Lib.CartNotUpdated)
                 TempData["Error"] = message;
-             
+
             return RedirectToAction("index");
         }
-        
-        public IActionResult Decrease(Guid Id)
+
+        public async Task<IActionResult> Decrease(Guid Id)
         {
             var userid = _userManager.GetUserId(User);
-            var product = _productService.GetById(Id);
+            var product = await _productService.GetById(Id);
             var message = _cartService.RemoveOneItem(userid, product, HttpContext.Session);
             if (message == Lib.CartNotUpdated)
                 TempData["Error"] = message;
-             
+
             return RedirectToAction("index");
         }
         public JsonResult GetCartAmount()

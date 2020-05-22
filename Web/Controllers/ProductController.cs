@@ -26,17 +26,17 @@ namespace Web.Controllers
             _cartService = cartService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             ProductViewModel vm = new ProductViewModel();
-            var products = _productService.GetAll();
+            var products = await _productService.GetAll();
             vm.Products = products;
             return View(vm);
         }
 
-        public IActionResult AddToCart(Guid Id)
+        public async Task<IActionResult> AddToCart(Guid Id)
         {
-            var product = _productService.GetById(Id);
+            var product = await _productService.GetById(Id);
             var userId = _userManager.GetUserId(User);
             var message = _cartService.AddItemToCart(userId, product, HttpContext.Session);
 

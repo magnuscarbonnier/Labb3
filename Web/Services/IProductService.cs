@@ -8,7 +8,7 @@ namespace Web.Services
 {
     public interface IProductService
     {
-        Product GetById(Guid Id);
-        IEnumerable<Product> GetAll();
+        Task<Product> GetById(Guid Id);
+        Task<List<Product>> GetAll();
     }
 }

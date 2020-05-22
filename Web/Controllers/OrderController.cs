@@ -65,7 +65,7 @@ namespace Web.Controllers
 
         [HttpPost]
         [Authorize]
-        public IActionResult Index(Order order)
+        public async Task<IActionResult> Index(Order order)
         {
             if (!ModelState.IsValid)
                 return View(order);
@@ -75,7 +75,7 @@ namespace Web.Controllers
             if (order != null && order.UserId == userId && cart.CartItems.Count>0)
             {
                 order.OrderItems = cart.CartItems;
-                message = _orderService.PlaceOrder(userId, order, HttpContext.Session);
+                message = await _orderService.PlaceOrder(userId, order, HttpContext.Session);
                 //empty cart
                 HttpContext.Session.Remove(Lib.SessionKeyCart);
                 return RedirectToAction("Details", "Order");
@@ -90,10 +90,10 @@ namespace Web.Controllers
         }
 
         [Authorize]
-        public IActionResult Remove(Guid Id)
+        public async Task<IActionResult> Remove(Guid Id)
         {
             var userid = _userManager.GetUserId(User);
-            var product = _productService.GetById(Id);
+            var product = await _productService.GetById(Id);
             var message = _cartService.RemoveItem(userid, product, HttpContext.Session);
             if (message == Lib.CartNotUpdated)
                 TempData["Error"] = message;
@@ -102,10 +102,10 @@ namespace Web.Controllers
         }
 
         [Authorize]
-        public IActionResult Increase(Guid Id)
+        public async Task<IActionResult> Increase(Guid Id)
         {
             var userid = _userManager.GetUserId(User);
-            var product = _productService.GetById(Id);
+            var product = await _productService.GetById(Id);
             var message = _cartService.AddOneItem(userid, product, HttpContext.Session);
             if (message == Lib.CartNotUpdated)
                 TempData["Error"] = message;
@@ -114,10 +114,10 @@ namespace Web.Controllers
         }
 
         [Authorize]
-        public IActionResult Decrease(Guid Id)
+        public async Task<IActionResult> Decrease(Guid Id)
         {
             var userid = _userManager.GetUserId(User);
-            var product = _productService.GetById(Id);
+            var product = await _productService.GetById(Id);
             var message = _cartService.RemoveOneItem(userid, product, HttpContext.Session);
             if (message == Lib.CartNotUpdated)
                 TempData["Error"] = message;
