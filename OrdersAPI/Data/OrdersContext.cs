@@ -13,8 +13,6 @@ namespace OrdersAPI.Data
            : base(options)
         {
         }
-
         public DbSet<Order> Orders { get; set; }
-
     }
 }

@@ -56,9 +56,9 @@ namespace Web.Models
             return OrderItems.Sum(x => x.Product.Price * x.Quantity);
         }
 
-        public Order()
-        {
-            Id = Guid.NewGuid();
-        } 
+        //public Order()
+        //{
+        //    Id = Guid.NewGuid();
+        //} 
     }
 }

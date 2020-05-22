@@ -65,7 +65,7 @@ namespace Web.Controllers
 
         [HttpPost]
         [Authorize]
-        public IActionResult Index(Order order)
+        public async Task<IActionResult> Index(Order order)
         {
             if (!ModelState.IsValid)
                 return View(order);
@@ -75,7 +75,7 @@ namespace Web.Controllers
             if (order != null && order.UserId == userId && cart.CartItems.Count>0)
             {
                 order.OrderItems = cart.CartItems;
-                message = _orderService.PlaceOrder(userId, order, HttpContext.Session);
+                message = await _orderService.PlaceOrder(userId, order, HttpContext.Session);
                 //empty cart
                 HttpContext.Session.Remove(Lib.SessionKeyCart);
                 return RedirectToAction("Details", "Order");

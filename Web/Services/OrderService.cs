@@ -2,6 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Web.Models;
 
@@ -9,24 +12,32 @@ namespace Web.Services
 {
     public class OrderService : IOrderService
     {
-        public string PlaceOrder(string userId, Order order, ISession session)
-        {
-            var existingOrders = session.Get<List<Order>>(Lib.SessionKeyOrderList);
-            var orders = new List<Order>();
-            var message = Lib.OrderNotAdded;
+        private const string apiaddress = "https://localhost:44328/api/orders";
+        private readonly HttpClient _httpClient;
 
+        public OrderService(HttpClient httpClient)
+        {
+            _httpClient = httpClient;
+        }
+        public async Task<string> PlaceOrder(string userId, Order order, ISession session)
+        {
+            //var existingOrders = session.Get<List<Order>>(Lib.SessionKeyOrderList);
+            //var orders = new List<Order>();
+            string message = Lib.OrderNotAdded;
             if (userId != null && order != null && order.UserId == userId)
             {
-                if(existingOrders != null && existingOrders.Any(c=>c.UserId==userId))
-                {
-                    orders = existingOrders;
-                }
-                message = Lib.OrderAdd;
-                order.OrderDate = DateTime.Now;
                 order.Status = Lib.Status.Beställd;
-                orders.Add(order);
-                session.Set<List<Order>>(Lib.SessionKeyOrderList, orders);
-                session.Set<Order>(Lib.SessionKeyOrder, order);
+                order.OrderDate = DateTime.Now;
+
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    WriteIndented = true
+                };
+                var response = await _httpClient.PostAsync(
+                    apiaddress, new StringContent(JsonSerializer.Serialize(order, options), Encoding.UTF8, "application/json"));
+
+                response.EnsureSuccessStatusCode();
                 session.Remove(Lib.SessionKeyCart);
             }
             return message;
