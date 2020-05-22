@@ -49,11 +49,8 @@ namespace Web.Controllers
         }
 
         [Authorize]
-        public IActionResult Details()
+        public IActionResult Details(Order order)
         {
-            var userId = _userManager.GetUserId(User);
-            var order = _orderService.GetOrder(userId, HttpContext.Session);
-
             if (order == null)
             {
                 TempData["Error"] = Lib.OrderNotGet;
@@ -70,22 +67,16 @@ namespace Web.Controllers
             if (!ModelState.IsValid)
                 return View(order);
             var userId = _userManager.GetUserId(User);
-            var message = Lib.OrderNotAdded;
+            
             var cart = _cartService.GetCart(userId, HttpContext.Session);
             if (order != null && order.UserId == userId && cart.CartItems.Count>0)
             {
                 order.OrderItems = cart.CartItems;
-                message = await _orderService.PlaceOrder(userId, order, HttpContext.Session);
-                //empty cart
-                HttpContext.Session.Remove(Lib.SessionKeyCart);
-                return RedirectToAction("Details", "Order");
+                var result = await _orderService.PlaceOrder(userId, order, HttpContext.Session);
+
+                return RedirectToAction("Details", "Order", result);
             }
 
-            if (message == Lib.OrderNotAdded)
-            {
-                TempData["Error"] = message;
-            }
-            
                 return RedirectToAction("Index", "Cart");            
         }
 
