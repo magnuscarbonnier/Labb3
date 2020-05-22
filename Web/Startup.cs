@@ -51,7 +51,7 @@ namespace Web
             services.AddRazorPages();
             services.AddHttpClient<IProductService, ProductService>();
             services.AddTransient<ICartService, CartService>();
-            services.AddTransient<IOrderService, OrderService>();
+            services.AddHttpClient<IOrderService, OrderService>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         }
 
