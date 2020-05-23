@@ -35,37 +35,23 @@ namespace Web.Controllers
             return View(cart);
         }
 
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> AddOrder()
-        {
-            var user = await _userManager.GetUserAsync(User);
+        //public async Task<IActionResult> AddOrder()
+        //{
+        //    var user = await _userManager.GetUserAsync(User);
         
-            var cart = _cartService.GetCart(user.Id, HttpContext.Session);
-            if(cart==null)
-            {
-                TempData["Error"] = "Lägg till varor i kundvagnen och försök igen...";
-                return RedirectToAction("Index","Home");
-            }
+        //    var cart = _cartService.GetCart(user.Id, HttpContext.Session);
+        //    if(cart==null)
+        //    {
+        //        TempData["Error"] = "Lägg till varor i kundvagnen och försök igen...";
+        //        return RedirectToAction("Index","Home");
+        //    }
 
-            Order order = new Order
-            {
-                UserId = user.Id,
-                OrderItems = cart.CartItems,
-                Email = user.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Address = user.Address,
-                ZipCode = user.ZipCode,
-                City = user.City,
-                Phone = user.PhoneNumber
-            };
+        //    var orderresponse = _cartService.PrepareOrder(user, cart);
+        //    if(orderresponse==null)
+        //    TempData["Error"] = Lib.OrderNotAdded;
 
-            var message = _orderService.AddOrder(user.Id, order, HttpContext.Session);
-            if(message==Lib.OrderNotAdded)
-            TempData["Error"] = message;
-            return RedirectToAction("Index", "Order");
-        }
+        //    return RedirectToAction("Index", "Order", orderresponse);
+        //}
 
         public async Task<IActionResult> Remove(Guid Id)
         {

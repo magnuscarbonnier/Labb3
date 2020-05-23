@@ -32,7 +32,7 @@ namespace OrdersAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Order>> GetOrder(Guid id)
         {
-            var order = await _context.Orders.FindAsync(id);
+            var order = await _context.Orders.Include(x=>x.OrderItems).FirstOrDefaultAsync(c=>c.Id==id);
 
             if (order == null)
             {
@@ -43,10 +43,10 @@ namespace OrdersAPI.Controllers
         }
 
         // GET: api/Orders/userid
-        [HttpGet("{id}")]
+        [HttpGet("/users/{id}")]
         public async Task<ActionResult<IEnumerable<Order>>> GetUserOrders(string id)
         {
-            var orders = await _context.Orders.Where(c=>c.UserId == id).ToListAsync();
+            var orders = await _context.Orders.Include(x => x.OrderItems).Where(c=>c.UserId == id).ToListAsync();
 
             if (orders == null)
             {

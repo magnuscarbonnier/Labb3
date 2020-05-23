@@ -27,11 +27,11 @@ namespace Web.Areas.Identity.Pages.Account.Manage
         public void OnGet()
         {
             var userId = _userManager.GetUserId(User);
-            var orders = _orderService.GetOrders(userId, HttpContext.Session);
+            var orders = _orderService.GetUserOrders(userId);
             
         if(orders!=null)
             {
-                Orders = orders;
+                Orders = orders.Result.ToList();
             }
         }
     }

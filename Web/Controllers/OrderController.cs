@@ -28,55 +28,60 @@ namespace Web.Controllers
         }
 
         [Authorize]
-        public IActionResult Index()
+        [HttpGet]
+        public async Task<IActionResult> Index()
         {
-            var userId = _userManager.GetUserId(User);
-            var order = _orderService.GetOrder(userId, HttpContext.Session);
-            var cart = _cartService.GetCart(userId, HttpContext.Session);
-            var message = Lib.OrderNotAdded;
+            CartViewModel vm = new CartViewModel();
+            var user = await _userManager.GetUserAsync(User);
             
-            if (order != null || cart != null)
+            var cart = _cartService.GetCart(user.Id, HttpContext.Session);
+            
+
+            if (cart == null)
             {
-                order.OrderItems = cart.CartItems;
-                message = _orderService.AddOrder(userId, order, HttpContext.Session);               
+                TempData["Error"] = "Lägg till varor i kundvagnen och försök igen...";
+                return RedirectToAction("Index", "Home");
             }
-            else
-            {
-                TempData["Error"] = message;
-                return RedirectToAction("Index", "Product");
-            }
-            return View(order);
+            vm.cart = cart;
+            var orderresponse = _cartService.PrepareOrder(user, cart);
+            if (orderresponse == null)
+                TempData["Error"] = Lib.OrderNotAdded;
+
+            vm.Order = orderresponse;
+            return View(vm);
         }
 
         [Authorize]
-        public IActionResult Details(Order order)
+        public async Task<IActionResult> Details(Guid id)
         {
-            if (order == null)
+            if (id == Guid.Empty)
             {
                 TempData["Error"] = Lib.OrderNotGet;
                 return RedirectToAction("Index", "Product");
             }
+            var order = await _orderService.GetOrderById(id);
 
             return View(order);
         }
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> Index(Order order)
+        public async Task<IActionResult> Checkout(CartViewModel vm)
         {
             if (!ModelState.IsValid)
-                return View(order);
+                return View(vm);
             var userId = _userManager.GetUserId(User);
+            vm.cart = _cartService.GetCart(userId, HttpContext.Session);
+            var order = CartToOrder(vm);
+
             
-            var cart = _cartService.GetCart(userId, HttpContext.Session);
-            if (order != null && order.UserId == userId && cart.CartItems.Count>0)
+            if (order != null && order.UserId == userId && vm.cart.CartItems.Count>0)
             {
-                order.OrderItems = cart.CartItems;
-                var result = await _orderService.PlaceOrder(userId, order, HttpContext.Session);
+                var orderid = await _orderService.PlaceOrder(userId, order, HttpContext.Session);
 
-                return RedirectToAction("Details", "Order", result);
+                return RedirectToAction("Details", "Order", new { id = orderid });
             }
-
+            else
                 return RedirectToAction("Index", "Cart");            
         }
 
@@ -114,6 +119,30 @@ namespace Web.Controllers
                 TempData["Error"] = message;
              
             return RedirectToAction("index");
+        }
+
+        public Order CartToOrder(CartViewModel vm)
+        {
+            return new Order
+            {
+                OrderItems = vm.cart.CartItems.Select(item => new OrderItem
+                {
+                    Name = item.Product.Name,
+                    Price = item.Product.Price,
+                    Quantity = item.Quantity,
+                    ProductId = item.Product.Id
+                }).ToList(),
+                FirstName = vm.Order.FirstName,
+                LastName = vm.Order.LastName,
+                City = vm.Order.City,
+                ZipCode = vm.Order.ZipCode,
+                Address = vm.Order.Address,
+                Phone = vm.Order.Phone,
+                Email = vm.Order.Email,
+                OrderDate = DateTime.Now,
+                UserId=vm.Order.UserId,
+                Status=Lib.Status.Beställd
+            };
         }
     }
 }
