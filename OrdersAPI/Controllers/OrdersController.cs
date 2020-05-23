@@ -25,14 +25,14 @@ namespace OrdersAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrders()
         {
-            return await _context.Orders.ToListAsync();
+            return await _context.Orders.Include(c=>c.OrderItems).ToListAsync();
         }
 
-        // GET: api/Orders/orderid
+        // GET: api/Orders/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Order>> GetOrder(Guid id)
         {
-            var order = await _context.Orders.Include(x=>x.OrderItems).FirstOrDefaultAsync(c=>c.Id==id);
+            var order = await _context.Orders.Include(c=>c.OrderItems).SingleOrDefaultAsync(c=>c.Id==id);
 
             if (order == null)
             {
@@ -42,21 +42,7 @@ namespace OrdersAPI.Controllers
             return order;
         }
 
-        // GET: api/Orders/userid
-        [HttpGet("/users/{id}")]
-        public async Task<ActionResult<IEnumerable<Order>>> GetUserOrders(string id)
-        {
-            var orders = await _context.Orders.Include(x => x.OrderItems).Where(c=>c.UserId == id).ToListAsync();
-
-            if (orders == null)
-            {
-                return NotFound();
-            }
-
-            return orders;
-        }
-
-        // PUT: api/Orders/orderid
+        // PUT: api/Orders/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
