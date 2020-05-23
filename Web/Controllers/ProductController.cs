@@ -34,6 +34,7 @@ namespace Web.Controllers
             return View(vm);
         }
 
+        //hit kommer cart.js
         public async Task<IActionResult> AddToCart(Guid Id)
         {
             var product = await _productService.GetById(Id);
@@ -43,6 +44,7 @@ namespace Web.Controllers
             if (message == Lib.CartNotUpdated)
                 TempData["Error"] = message;
 
+            //undrar vad den ska redirectas till
             return RedirectToAction("index", "Cart");
         }
     }

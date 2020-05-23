@@ -75,12 +75,11 @@
     @foreach (var item in Model.OrderItems)
     {
         <div class="col-sm-12 bg-light col-md-5 border-secondary m-2 box-shadow">
-            <div>Produktnamn: @item.Product.Name</div>
-            <div>Beskrivning: @item.Product.Description</div>
+            <div>Produktnamn: @item.Name</div>
             <div>
                 Antal: @item.Quantity
             </div>
-            <div>Pris: @item.Product.Price.ToString("C")</div>
+            <div>Pris: @item.Price.ToString("C")</div>
         </div>
     }
 </div>

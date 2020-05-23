@@ -25,13 +25,13 @@
             {
             <div class="col-sm-12 col-md-8 m-2 bg-light text-dark border-secondary box-shadow">
                 <div>
-                    Namn: @Html.DisplayFor(modelItem => item.Product.Name)
+                    Namn: @Html.DisplayFor(modelItem => item.Name)
                 </div>
                 <div>
                     Antal: @Html.DisplayFor(modelItem => item.Quantity)
                 </div>
                 <div>
-                    Pris: @item.Product.Price.ToString("C")
+                    Pris: @item.Price.ToString("C")
                 </div>
             </div>
             }
