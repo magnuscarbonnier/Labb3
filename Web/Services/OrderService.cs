@@ -65,11 +65,12 @@ namespace Web.Services
 
         public async Task<IEnumerable<Order>> GetUserOrders(string userid)
         {
-            var response = await _httpClient.GetAsync(apiaddress + "/users/" + userid);
+            var response = await _httpClient.GetAsync(apiaddress);
             response.EnsureSuccessStatusCode();
             var ordersresponse = await response.Content.ReadAsStringAsync();
             var orders = JsonConvert.DeserializeObject<IEnumerable<Order>>(ordersresponse);
-            return orders;
+            var userorders = orders.Where(c => c.UserId == userid);
+            return userorders;
         }
     }
 }
