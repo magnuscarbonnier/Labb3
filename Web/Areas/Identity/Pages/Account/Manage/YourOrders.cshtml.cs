@@ -1,11 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Web.Models;
 using Web.Services;
 
@@ -21,15 +21,15 @@ namespace Web.Areas.Identity.Pages.Account.Manage
             _orderService = orderService;
             _userManager = userManager;
         }
-        
-            
+
+
         public List<Order> Orders = new List<Order>();
         public void OnGet()
         {
             var userId = _userManager.GetUserId(User);
             var orders = _orderService.GetUserOrders(userId);
-            
-        if(orders!=null)
+
+            if (orders != null)
             {
                 Orders = orders.Result.ToList();
             }

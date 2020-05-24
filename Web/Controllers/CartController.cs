@@ -1,15 +1,15 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.V3.Pages.Internal.Account;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using Web.Models;
 using Web.Services;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Web.ViewModels;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity.UI.V3.Pages.Internal.Account;
 
 namespace Web.Controllers
 {
@@ -35,23 +35,7 @@ namespace Web.Controllers
             return View(cart);
         }
 
-        //public async Task<IActionResult> AddOrder()
-        //{
-        //    var user = await _userManager.GetUserAsync(User);
-        
-        //    var cart = _cartService.GetCart(user.Id, HttpContext.Session);
-        //    if(cart==null)
-        //    {
-        //        TempData["Error"] = "Lägg till varor i kundvagnen och försök igen...";
-        //        return RedirectToAction("Index","Home");
-        //    }
 
-        //    var orderresponse = _cartService.PrepareOrder(user, cart);
-        //    if(orderresponse==null)
-        //    TempData["Error"] = Lib.OrderNotAdded;
-
-        //    return RedirectToAction("Index", "Order", orderresponse);
-        //}
 
         public async Task<IActionResult> Remove(Guid Id)
         {
