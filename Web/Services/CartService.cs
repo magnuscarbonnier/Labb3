@@ -25,7 +25,7 @@ namespace Web.Services
 
             else if (userId != null)
             {
-                cart = new Cart() { CartUserId = userId, CartItems = new List<Item>() };
+                cart = new Cart() { CartUserId = userId, CartItems = new List<CartItem>() };
             }
 
             return cart;
@@ -50,14 +50,14 @@ namespace Web.Services
                     }
                     else
                     {
-                        cart.CartItems.Add(new Item { Product = product, Quantity = 1 });
+                        cart.CartItems.Add(new CartItem { Product = product, Quantity = 1 });
                         message = Lib.CartAdd;
                     }
                 }
                 else
                 {
                     cart.CartUserId = userId;
-                    cart.CartItems.Add(new Item { Product = product, Quantity = 1 });
+                    cart.CartItems.Add(new CartItem { Product = product, Quantity = 1 });
                     message = Lib.CartAdd;
                 }
                 session.Set<Cart>(Lib.SessionKeyCart, cart);
@@ -83,7 +83,7 @@ namespace Web.Services
                     session.Set<Cart>(Lib.SessionKeyCart, cart);
                 }
             }
-            
+
             return message;
         }
 
@@ -100,7 +100,7 @@ namespace Web.Services
                 {
                     int itemIndex = cart.CartItems.FindIndex(x => x.Product.Id == product.Id);
 
-                    if (cart.CartItems.FirstOrDefault(c=>c.Product.Id==product.Id).Quantity==1)
+                    if (cart.CartItems.FirstOrDefault(c => c.Product.Id == product.Id).Quantity == 1)
                     {
                         message = Lib.CartRemove;
                         cart.CartItems.RemoveAt(itemIndex);
@@ -137,6 +137,47 @@ namespace Web.Services
             return message;
         }
 
-        
+        //public List<OrderItem> CartItemsToOrderItems(List<CartItem> cartItems)
+        //{
+        //    List<OrderItem> orderItems = new List<OrderItem>();
+        //    foreach (var item in cartItems)
+        //    {
+        //        OrderItem orderItem = new OrderItem
+        //        {
+        //            Name = item.Product.Name,
+        //            Price = item.Product.Price,
+        //            ProductId = item.Product.Id,
+        //            Quantity = item.Quantity
+        //        };
+        //        orderItems.Add(orderItem);
+        //    }
+        //    return orderItems;
+        //}
+
+        public Order PrepareOrder(ApplicationUser user, Cart cart)
+        {
+            if (user.Id != cart.CartUserId)
+                return null;
+            return new Order
+            {
+                OrderItems = cart.CartItems.Select(x => new OrderItem
+                {
+                    ProductId = x.Product.Id,
+                    Name = x.Product.Name,
+                    Price = x.Product.Price,
+                    Quantity = x.Quantity
+                }).ToList(),
+                Address = user.Address,
+                City = user.City,
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                OrderDate = DateTime.Now,
+                Phone = user.PhoneNumber,
+                Status = Lib.Status.Beställd,
+                UserId = user.Id,
+                ZipCode = user.ZipCode
+            };
+        }
     }
 }

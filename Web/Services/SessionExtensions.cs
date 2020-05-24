@@ -1,15 +1,14 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-
-using Microsoft.AspNetCore.Http;
 using System.Text.Json;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
 using Web.Models;
-using Microsoft.AspNetCore.Mvc.Formatters;
 
 namespace Web.Services
 {
@@ -31,22 +30,22 @@ namespace Web.Services
             var sessionUserid = session.Get<string>(Lib.SessionKeyUserId);
             string message;
 
-            if (loggedinuserid!=null && loggedinuserid == sessionUserid)
+            if (loggedinuserid != null && loggedinuserid == sessionUserid)
             {
                 message = "loggedinuser == sessionuser";
             }
-            else if(loggedinuserid==null)
+            else if (loggedinuserid == null)
             {
                 message = "ej inloggad";
             }
             else
-            { 
+            {
                 session.Clear();
                 session.Set<string>(Lib.SessionKeyUserId, loggedinuserid);
                 message = "Session rensad";
             }
 
-            return message ;
+            return message;
         }
     }
 }

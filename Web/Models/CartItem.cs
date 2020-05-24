@@ -1,21 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Web.Models
 {
-    public class Item
+    public class CartItem
     {
         public Product Product { get; set; }
-        
-        [Display(Name = "Antal")]
         public int Quantity { get; set; }
-
-        public Item()
-        {
-            Product = new Product();
-        }
     }
 }

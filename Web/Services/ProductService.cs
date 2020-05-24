@@ -87,7 +87,7 @@ namespace Web.Services
             }
 
     };
-        
+
         public async Task<List<Product>> GetAll()
         {
             List<Product> products = new List<Product>();
@@ -111,7 +111,7 @@ namespace Web.Services
         public async Task<Product> GetById(Guid id)
         {
             Product product = new Product();
-            var request = new HttpRequestMessage(HttpMethod.Get, apiaddress+$"/{id}");
+            var request = new HttpRequestMessage(HttpMethod.Get, apiaddress + $"/{id}");
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             using (var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead))

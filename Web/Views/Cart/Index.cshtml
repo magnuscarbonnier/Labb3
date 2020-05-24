@@ -45,8 +45,8 @@
         <div class="row">
             <h4 class="col-sm-12 m-2">Totalt: @Model.Total().ToString("C")</h4>
         </div>
-        <form method="post" asp-action="AddOrder">
-            <input class="btn btn-secondary" type="submit" value="Beställ" />
+        <form method="post">
+            <a class="btn btn-secondary" asp-area="" asp-controller="Order" asp-action="Index">Gå till kassan</a>
         </form>
     }
 }

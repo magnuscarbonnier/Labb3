@@ -36,6 +36,6 @@ namespace OrdersAPI.Models
             return OrderItems.Sum(x => x.Price * x.Quantity);
         }
     }
-    
+
     public enum Status { Beställd = 0, Bekräftad = 1, Packas = 2, Skickad = 3, Avbeställd = 4 }
 }

@@ -1,4 +1,4 @@
-﻿@model Web.Models.Order
+﻿@model Web.ViewModels.CartViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -18,45 +18,30 @@
             <div class="card-body bg-dark text-white">
 
                 <div class="card-text bg-dark text-white">
-                    <form asp-action="Index">
+                    <form asp-action="CheckOut">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                        @Html.HiddenFor(x => x.OrderItems)
-                        @Html.HiddenFor(x => x.Id)
-                        @Html.HiddenFor(x => x.OrderDate)
-                        @Html.HiddenFor(x => x.Status)
-                        @Html.HiddenFor(x => x.UserId)
-                        @Html.HiddenFor(x => x.Email)
+                        @Html.HiddenFor(c => c.Order.UserId)
+                        @Html.HiddenFor(c => c.Order.Phone)
 
                         <div class="form-group">
-                            <label asp-for="FirstName" class="control-label"></label>
-                            <input asp-for="FirstName" value="@Model.FirstName" class="form-control" />
-                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                            @Html.TextBoxFor(c => c.Order.FirstName)
                         </div>
                         <div class="form-group">
-                            <label asp-for="LastName" class="control-label"></label>
-                            <input asp-for="LastName" value="@Model.LastName" class="form-control" />
-                            <span asp-validation-for="LastName" class="text-danger"></span>
+                            @Html.TextBoxFor(c => c.Order.LastName)
                         </div>
                         <div class="form-group">
-                            <label asp-for="Address" class="control-label"></label>
-                            <input asp-for="Address" value="@Model.Address" class="form-control" />
-                            <span asp-validation-for="Address" class="text-danger"></span>
+                            @Html.TextBoxFor(c => c.Order.Address)
                         </div>
                         <div class="form-group">
-                            <label asp-for="ZipCode" class="control-label"></label>
-                            <input asp-for="ZipCode" value="@Model.ZipCode" class="form-control" />
-                            <span asp-validation-for="ZipCode" class="text-danger"></span>
+                            @Html.TextBoxFor(c => c.Order.ZipCode)
                         </div>
                         <div class="form-group">
-                            <label asp-for="City" class="control-label"></label>
-                            <input asp-for="City" value="@Model.City" class="form-control" />
-                            <span asp-validation-for="City" class="text-danger"></span>
+                            @Html.TextBoxFor(c => c.Order.City)
                         </div>
                         <div class="form-group">
-                            <label asp-for="Phone" class="control-label"></label>
-                            <input asp-for="Phone" value="@Model.Phone" class="form-control" />
-                            <span asp-validation-for="Phone" class="text-danger"></span>
+                            @Html.TextBoxFor(c => c.Order.Email)
                         </div>
+
                         <div class="form-group">
                             <input type="submit" value="Skicka beställning" class="btn btn-primary" />
                         </div>
@@ -68,11 +53,10 @@
     <div class="col-sm-12 col-md-8">
         <h3>Dina varor:</h3>
         <div class="row">
-            @foreach (var item in Model.OrderItems)
+            @foreach (var item in Model.cart.CartItems)
             {
                 <div class="col-sm-12 bg-light col-md-5 border-secondary m-2 box-shadow">
                     <div>Produktnamn: @item.Product.Name</div>
-                    <div>Beskrivning: @item.Product.Description</div>
                     <div>
                         Antal: @item.Quantity
                         <a href="@Url.Action("Decrease", "Order", new { Id = item.Product.Id })"><i class="fas fa-minus-circle text-secondary"></i></a>
@@ -84,7 +68,7 @@
             }
         </div>
             <h4 class="font-weight-bold m-3">
-                Totalpris: @Model.Total().ToString("C")
+                Totalpris: @Model.Order.Total().ToString("C")
             </h4>
     </div>
 </div>

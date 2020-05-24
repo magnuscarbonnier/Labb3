@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Web.Models;
+using Web.ViewModels;
 
 namespace Web.Services
 {
@@ -19,38 +20,33 @@ namespace Web.Services
         {
             _httpClient = httpClient;
         }
-        public async Task<string> PlaceOrder(string userId, Order order, ISession session)
+
+        [Authorize]
+        public async Task<Guid> PlaceOrder(string userId, Order order, ISession session)
         {
-            //var existingOrders = session.Get<List<Order>>(Lib.SessionKeyOrderList);
-            //var orders = new List<Order>();
-            string message = Lib.OrderNotAdded;
             if (userId != null && order != null && order.UserId == userId)
             {
-                order.Status = Lib.Status.Beställd;
-                order.OrderDate = DateTime.Now;
-
-                var options = new JsonSerializerOptions
+                var JSON = JsonConvert.SerializeObject(order);
+                var orderContent = new StringContent(JSON, System.Text.Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync(apiaddress, orderContent);
+                var orderResponse = await response.Content.ReadAsStringAsync();
+                var ordersaved = JsonConvert.DeserializeObject<Order>(orderResponse);
+                if (ordersaved != null)
                 {
-                    PropertyNameCaseInsensitive = true,
-                    WriteIndented = true
-                };
-                var response = await _httpClient.PostAsync(
-                    apiaddress, new StringContent(JsonSerializer.Serialize(order, options), Encoding.UTF8, "application/json"));
+                    session.Remove(Lib.SessionKeyCart);
+                }
 
-                response.EnsureSuccessStatusCode();
-                session.Remove(Lib.SessionKeyCart);
+                return ordersaved.Id;
             }
-            return message;
+            return Guid.Empty;
         }
 
-        public Order GetOrder(string userId, ISession session)
+        public async Task<Order> GetOrderById(Guid orderId)
         {
-            var existingOrder= session.Get<Order>(Lib.SessionKeyOrder);
-            var order = new Order();
-            if (existingOrder != null && userId != null && existingOrder.UserId == userId)
-            {
-                order = existingOrder;
-            }
+            var response = await _httpClient.GetAsync(apiaddress + "/" + orderId);
+            response.EnsureSuccessStatusCode();
+            var orderresponse = await response.Content.ReadAsStringAsync();
+            var order = JsonConvert.DeserializeObject<Order>(orderresponse);
             return order;
         }
 
@@ -59,7 +55,7 @@ namespace Web.Services
             var existingOrders = session.Get<List<Order>>(Lib.SessionKeyOrderList);
             var orders = new List<Order>();
 
-            if (existingOrders != null && userId != null && existingOrders.Any(c=>c.UserId==userId))
+            if (existingOrders != null && userId != null && existingOrders.Any(c => c.UserId == userId))
             {
                 orders = existingOrders;
             }
@@ -67,15 +63,14 @@ namespace Web.Services
             return orders;
         }
 
-        public string AddOrder(string userId, Order order, ISession session)
+        public async Task<IEnumerable<Order>> GetUserOrders(string userid)
         {
-            var message = Lib.OrderNotAdded;
-            if (order != null && order.UserId == userId && order.OrderItems!= null)
-            {
-                session.Set<Order>(Lib.SessionKeyOrder, order);
-                message = Lib.OrderAdd;
-            }
-            return message;
+            var response = await _httpClient.GetAsync(apiaddress);
+            response.EnsureSuccessStatusCode();
+            var ordersresponse = await response.Content.ReadAsStringAsync();
+            var orders = JsonConvert.DeserializeObject<IEnumerable<Order>>(ordersresponse);
+            var userorders = orders.Where(c => c.UserId == userid);
+            return userorders;
         }
     }
 }

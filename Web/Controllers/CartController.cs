@@ -1,15 +1,15 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.V3.Pages.Internal.Account;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using Web.Models;
 using Web.Services;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Web.ViewModels;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity.UI.V3.Pages.Internal.Account;
 
 namespace Web.Controllers
 {
@@ -35,37 +35,7 @@ namespace Web.Controllers
             return View(cart);
         }
 
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> AddOrder()
-        {
-            var user = await _userManager.GetUserAsync(User);
-        
-            var cart = _cartService.GetCart(user.Id, HttpContext.Session);
-            if(cart==null)
-            {
-                TempData["Error"] = "Lägg till varor i kundvagnen och försök igen...";
-                return RedirectToAction("Index","Home");
-            }
 
-            Order order = new Order
-            {
-                UserId = user.Id,
-                OrderItems = cart.CartItems,
-                Email = user.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Address = user.Address,
-                ZipCode = user.ZipCode,
-                City = user.City,
-                Phone = user.PhoneNumber
-            };
-
-            var message = _orderService.AddOrder(user.Id, order, HttpContext.Session);
-            if(message==Lib.OrderNotAdded)
-            TempData["Error"] = message;
-            return RedirectToAction("Index", "Order");
-        }
 
         public async Task<IActionResult> Remove(Guid Id)
         {

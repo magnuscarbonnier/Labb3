@@ -48,17 +48,12 @@ namespace Web.Models
 
         public Status Status { get; set; }
 
-        public List<Item> OrderItems { get; set; }
+        public List<OrderItem> OrderItems { get; set; }
 
         [Display(Name = "Totalpris")]
         public decimal Total()
         {
-            return OrderItems.Sum(x => x.Product.Price * x.Quantity);
+            return OrderItems.Sum(x => x.Price * x.Quantity);
         }
-
-        //public Order()
-        //{
-        //    Id = Guid.NewGuid();
-        //} 
     }
 }
