@@ -83,7 +83,7 @@ namespace Web.Services
                     session.Set<Cart>(Lib.SessionKeyCart, cart);
                 }
             }
-            
+
             return message;
         }
 
@@ -100,7 +100,7 @@ namespace Web.Services
                 {
                     int itemIndex = cart.CartItems.FindIndex(x => x.Product.Id == product.Id);
 
-                    if (cart.CartItems.FirstOrDefault(c=>c.Product.Id==product.Id).Quantity==1)
+                    if (cart.CartItems.FirstOrDefault(c => c.Product.Id == product.Id).Quantity == 1)
                     {
                         message = Lib.CartRemove;
                         cart.CartItems.RemoveAt(itemIndex);

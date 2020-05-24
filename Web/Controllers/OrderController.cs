@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Web.Models;
 using Web.Services;
 using Web.ViewModels;
@@ -33,9 +33,9 @@ namespace Web.Controllers
         {
             CartViewModel vm = new CartViewModel();
             var user = await _userManager.GetUserAsync(User);
-            
+
             var cart = _cartService.GetCart(user.Id, HttpContext.Session);
-            
+
 
             if (cart == null)
             {
@@ -70,19 +70,19 @@ namespace Web.Controllers
         {
             if (!ModelState.IsValid)
                 return View(vm);
+
             var userId = _userManager.GetUserId(User);
             vm.cart = _cartService.GetCart(userId, HttpContext.Session);
             var order = CartToOrder(vm);
 
-            
-            if (order != null && order.UserId == userId && vm.cart.CartItems.Count>0)
+            if (order != null && order.UserId == userId && vm.cart.CartItems.Count > 0)
             {
                 var orderid = await _orderService.PlaceOrder(userId, order, HttpContext.Session);
 
                 return RedirectToAction("Details", "Order", new { id = orderid });
             }
             else
-                return RedirectToAction("Index", "Cart");            
+                return RedirectToAction("Index", "Cart");
         }
 
         [Authorize]
@@ -93,7 +93,7 @@ namespace Web.Controllers
             var message = _cartService.RemoveItem(userid, product, HttpContext.Session);
             if (message == Lib.CartNotUpdated)
                 TempData["Error"] = message;
-             
+
             return RedirectToAction("index");
         }
 
@@ -105,7 +105,7 @@ namespace Web.Controllers
             var message = _cartService.AddOneItem(userid, product, HttpContext.Session);
             if (message == Lib.CartNotUpdated)
                 TempData["Error"] = message;
-             
+
             return RedirectToAction("index");
         }
 
@@ -117,7 +117,7 @@ namespace Web.Controllers
             var message = _cartService.RemoveOneItem(userid, product, HttpContext.Session);
             if (message == Lib.CartNotUpdated)
                 TempData["Error"] = message;
-             
+
             return RedirectToAction("index");
         }
 
@@ -140,8 +140,8 @@ namespace Web.Controllers
                 Phone = vm.Order.Phone,
                 Email = vm.Order.Email,
                 OrderDate = DateTime.Now,
-                UserId=vm.Order.UserId,
-                Status=Lib.Status.Beställd
+                UserId = vm.Order.UserId,
+                Status = Lib.Status.Beställd
             };
         }
     }

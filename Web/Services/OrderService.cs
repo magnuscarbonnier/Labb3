@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Web.Models;
-using Newtonsoft.Json;
 using Web.ViewModels;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Web.Services
 {
@@ -31,11 +31,11 @@ namespace Web.Services
                 var response = await _httpClient.PostAsync(apiaddress, orderContent);
                 var orderResponse = await response.Content.ReadAsStringAsync();
                 var ordersaved = JsonConvert.DeserializeObject<Order>(orderResponse);
-                if(ordersaved!=null)
+                if (ordersaved != null)
                 {
                     session.Remove(Lib.SessionKeyCart);
                 }
-                
+
                 return ordersaved.Id;
             }
             return Guid.Empty;
@@ -55,7 +55,7 @@ namespace Web.Services
             var existingOrders = session.Get<List<Order>>(Lib.SessionKeyOrderList);
             var orders = new List<Order>();
 
-            if (existingOrders != null && userId != null && existingOrders.Any(c=>c.UserId==userId))
+            if (existingOrders != null && userId != null && existingOrders.Any(c => c.UserId == userId))
             {
                 orders = existingOrders;
             }

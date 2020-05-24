@@ -15,5 +15,5 @@ namespace Web.Models
             return CartItems.Sum(x => x.Product.Price * x.Quantity);
         }
     }
-    
+
 }

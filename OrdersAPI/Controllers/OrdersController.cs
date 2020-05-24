@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OrdersAPI.Data;
 using OrdersAPI.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace OrdersAPI.Controllers
 {
@@ -25,14 +25,14 @@ namespace OrdersAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrders()
         {
-            return await _context.Orders.Include(c=>c.OrderItems).ToListAsync();
+            return await _context.Orders.Include(c => c.OrderItems).ToListAsync();
         }
 
         // GET: api/Orders/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Order>> GetOrder(Guid id)
         {
-            var order = await _context.Orders.Include(c=>c.OrderItems).SingleOrDefaultAsync(c=>c.Id==id);
+            var order = await _context.Orders.Include(c => c.OrderItems).SingleOrDefaultAsync(c => c.Id == id);
 
             if (order == null)
             {
