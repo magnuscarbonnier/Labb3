@@ -25,7 +25,12 @@ namespace OrdersAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrders()
         {
-            return await _context.Orders.Include(c => c.OrderItems).ToListAsync();
+            return await _context.Orders.Include(c => c.OrderItems).OrderByDescending(c=>c.OrderDate).ToListAsync();
+        }
+        [HttpGet("user/{id}")]
+        public async Task<ActionResult<IEnumerable<Order>>> GetUserOrders(string id)
+        {
+            return await _context.Orders.Include(c => c.OrderItems).OrderByDescending(c => c.OrderDate).Where(c=>c.UserId==id).ToListAsync();
         }
 
         // GET: api/Orders/5

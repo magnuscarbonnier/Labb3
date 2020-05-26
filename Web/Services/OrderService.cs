@@ -43,7 +43,7 @@ namespace Web.Services
 
         public async Task<Order> GetOrderById(Guid orderId)
         {
-            var response = await _httpClient.GetAsync(apiaddress + "/" + orderId);
+            var response = await _httpClient.GetAsync(apiaddress + $"/{orderId}");
             response.EnsureSuccessStatusCode();
             var orderresponse = await response.Content.ReadAsStringAsync();
             var order = JsonConvert.DeserializeObject<Order>(orderresponse);
@@ -65,12 +65,11 @@ namespace Web.Services
 
         public async Task<IEnumerable<Order>> GetUserOrders(string userid)
         {
-            var response = await _httpClient.GetAsync(apiaddress);
+            var response = await _httpClient.GetAsync(apiaddress+$"/user/{userid}");
             response.EnsureSuccessStatusCode();
             var ordersresponse = await response.Content.ReadAsStringAsync();
             var orders = JsonConvert.DeserializeObject<IEnumerable<Order>>(ordersresponse);
-            var userorders = orders.Where(c => c.UserId == userid);
-            return userorders;
+            return orders;
         }
     }
 }
