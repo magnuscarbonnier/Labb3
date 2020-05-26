@@ -15,6 +15,7 @@ namespace ProductsAPI.Tests
     {
         public TestServer Server { get; private set; }
         public HttpClient Client { get; private set; }
+
         public TestClientProvider()
         {
             IConfigurationRoot configuration = new ConfigurationBuilder()
