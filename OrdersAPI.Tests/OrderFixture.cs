@@ -24,7 +24,6 @@ namespace OrdersAPI.Tests
 
             using (var client = new TestClientProvider().Client)
             {
-                Guid guid = new Guid();
                 var testOrder = new Order
                 {
                     Address = "Testadress",
@@ -34,9 +33,10 @@ namespace OrdersAPI.Tests
                     LastName = "Testefternamn",
                     OrderDate = DateTime.Now,
                     Phone = "000011111",
+                    ZipCode="29281",
                     Status = Status.Beställd,
-                    UserId = guid.ToString(),
-                    OrderItems=new List<OrderItem> {new OrderItem { Name = "Testprodukt", Price = 98.00M, ProductId=new Guid(), Quantity=3} }
+                    UserId = Guid.NewGuid().ToString(),
+                    OrderItems=new List<OrderItem> {new OrderItem { Name = "Testprodukt", Price = 98.00M, ProductId=Guid.NewGuid(), Quantity=3} }
                 };
 
                 var payload = new StringContent(JsonConvert.SerializeObject(testOrder), Encoding.UTF8, "application/json");
