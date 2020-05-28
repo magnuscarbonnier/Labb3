@@ -1,7 +1,9 @@
-﻿using OrdersAPI.Models;
+﻿using Newtonsoft.Json;
+using OrdersAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -70,5 +72,30 @@ namespace OrdersAPI.Tests
                 }
             }
         }
+
+        //[Fact]
+        //public async Task PutOrder_returns_updatedOrder()
+        //{
+           
+        //    using (var client = new TestClientProvider().Client)
+        //    {
+        //        var order = _fixture.order;
+        //        order.Status = Status.Bekräftad;
+                
+        //        var payload = JsonConvert.SerializeObject(order);
+        //        HttpContent content = new StringContent(payload, Encoding.UTF8, "application/json");
+                
+        //        //put order
+        //        var putresponse = await client.PutAsync($"/api/orders/{order.Id}",content);
+
+        //        using (var responseStream = await putresponse.Content.ReadAsStreamAsync())
+        //        {
+        //            var updatedorder = await System.Text.Json.JsonSerializer.DeserializeAsync<Order>(responseStream,
+        //                new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+        //            var removeresponse = await client.DeleteAsync($"/api/orders/{updatedorder.Id}");
+        //            Assert.Equal(order.Status,updatedorder.Status);
+        //        }
+        //    }
+        //}
     }
-    }
+}

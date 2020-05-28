@@ -33,9 +33,8 @@ namespace ProductsAPI.Tests
 
                 var payload = new StringContent(JsonConvert.SerializeObject(testProduct), Encoding.UTF8, "application/json");
                 var response = await client.PostAsync($"/api/products", payload);
-                var responseProduct = await response.Content.ReadAsStringAsync();
 
-                var createdProduct = JsonConvert.DeserializeObject<Product>(responseProduct);
+                var createdProduct = await JsonHandler.Deserialize<Product>(response);
                 return createdProduct;
             }
         }
