@@ -55,7 +55,7 @@ namespace OrdersAPI.Tests
             }
         }
         [Fact]
-        public async Task GetProductById_Returns_Product()
+        public async Task GetOrderById_Returns_Order()
         {
             using (var client = new TestClientProvider().Client)
             {

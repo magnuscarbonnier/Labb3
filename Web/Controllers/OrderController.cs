@@ -69,7 +69,7 @@ namespace Web.Controllers
         public async Task<IActionResult> Checkout(CartViewModel vm)
         {
             if (!ModelState.IsValid)
-                return View(vm);
+                return RedirectToAction("Index","Cart") ;
 
             var userId = _userManager.GetUserId(User);
             vm.cart = _cartService.GetCart(userId, HttpContext.Session);
