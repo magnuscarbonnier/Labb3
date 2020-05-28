@@ -15,7 +15,6 @@ namespace Web.Services
         string AddOneItem(string userId, Product product, ISession session);
         string RemoveOneItem(string userId, Product product, ISession session);
         string RemoveItem(string userId, Product product, ISession session);
-        //List<OrderItem> CartItemsToOrderItems(List<CartItem> cartItems);
         Order PrepareOrder(ApplicationUser user, Cart cart);
     }
 }

@@ -71,7 +71,7 @@ namespace ProductService.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok(product);
         }
 
         // POST: api/Products

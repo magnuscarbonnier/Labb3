@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Index";
 }
-    <a class="btn-sm btn-outline-secondary" href="##" onClick="history.go(-1); return false;">Gå tillbaka</a>
+<a class="btn-sm btn-outline-secondary" href="##" onClick="history.go(-1); return false;">Gå tillbaka</a>
 <h2>Kontrollera dina uppgifter</h2>
 <hr />
 
@@ -18,28 +18,45 @@
             <div class="card-body bg-dark text-white">
 
                 <div class="card-text bg-dark text-white">
-                    <form asp-action="CheckOut">
+                    <form asp-action="Checkout">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         @Html.HiddenFor(c => c.Order.UserId)
                         @Html.HiddenFor(c => c.Order.Phone)
 
                         <div class="form-group">
-                            @Html.TextBoxFor(c => c.Order.FirstName)
+                            <label asp-for="Order.FirstName" class="control-label"></label>
+                            <input asp-for="Order.FirstName" type="text" class="form-control" />
+                            <span asp-validation-for="Order.FirstName" class="text-danger"></span>
                         </div>
                         <div class="form-group">
-                            @Html.TextBoxFor(c => c.Order.LastName)
+                            <label asp-for="Order.LastName" class="control-label"></label>
+                            <input asp-for="Order.LastName" type="text" class="form-control" />
+                            <span asp-validation-for="Order.LastName" class="text-danger"></span>
                         </div>
                         <div class="form-group">
-                            @Html.TextBoxFor(c => c.Order.Address)
+                            <label asp-for="Order.Address" class="control-label"></label>
+                            <input asp-for="Order.Address" type="text" class="form-control" />
+                            <span asp-validation-for="Order.Address" class="text-danger"></span>
                         </div>
                         <div class="form-group">
-                            @Html.TextBoxFor(c => c.Order.ZipCode)
+                            <label asp-for="Order.ZipCode" class="control-label"></label>
+                            <input asp-for="Order.ZipCode" type="text" class="form-control" />
+                            <span asp-validation-for="Order.ZipCode" class="text-danger"></span>
                         </div>
                         <div class="form-group">
-                            @Html.TextBoxFor(c => c.Order.City)
+                            <label asp-for="Order.City" class="control-label"></label>
+                            <input asp-for="Order.City" type="text" class="form-control" />
+                            <span asp-validation-for="Order.City" class="text-danger"></span>
                         </div>
                         <div class="form-group">
-                            @Html.TextBoxFor(c => c.Order.Email)
+                            <label asp-for="Order.Email" class="control-label"></label>
+                            <input asp-for="Order.Email" type="text" class="form-control" />
+                            <span asp-validation-for="Order.Email" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Order.Phone" class="control-label"></label>
+                            <input asp-for="Order.Phone" type="text" class="form-control" />
+                            <span asp-validation-for="Order.Phone" class="text-danger"></span>
                         </div>
 
                         <div class="form-group">
@@ -67,9 +84,12 @@
                 </div>
             }
         </div>
-            <h4 class="font-weight-bold m-3">
-                Totalpris: @Model.Order.Total().ToString("C")
-            </h4>
+        <h4 class="font-weight-bold m-3">
+            Totalpris: @Model.Order.Total().ToString("C")
+        </h4>
     </div>
 </div>
 
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
