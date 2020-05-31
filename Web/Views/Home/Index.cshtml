@@ -1,8 +1,45 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@model Web.ViewModels.ProductViewModel
+@{ ViewData["Title"] = "Home Page"; }
 
 <div class="text-center">
     <h3>Välkommen!</h3>
     <a class="btn btn-secondary" asp-area="" asp-controller="Product" asp-action="Index">Visa alla produkter</a>
+</div>
+<br />
+<br />
+<div class="row text-center">
+    @if (Model.Products.Count() > 0)
+    {@*carousel*@
+
+          <div class="col-lg-3 col-md-4 col-sm-5">
+               <div id="carouselExampleSlidesOnly" class="carousel slide" data-ride="carousel">
+                     <div class="carousel-inner">
+                        @{int count = 0;}
+                        @foreach (var product in Model.Products)
+                        {
+                            if (count == 0)
+                            {
+                            <div class="carousel-item active">
+                                <img class="d-block w-100" src="@product.ImgSrc" alt="@product.Name">
+                            </div>      
+                            }
+                            else
+                            {
+                            <div class="carousel-item">
+                                <img class="d-block w-100" src="@product.ImgSrc" alt="@product.Name">
+                            </div>
+                            }
+                            count++;
+                         }
+                     </div>
+               </div>
+          </div> 
+                    @*end of carousel*@
+      <div class="col-lg-6 col-md-6 col-sm-6 bg-light">
+          <h1>Passa på nu!</h1>
+          <p>Här ser du ett urval av det du kan köpa i webshopen. Skynda att fynda!</p>
+          <a class="btn btn-secondary" asp-area="" asp-controller="Product" asp-action="Index">Visa alla produkter</a>
+      </div>
+                                    
+      }
 </div>
