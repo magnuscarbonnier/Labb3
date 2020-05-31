@@ -88,7 +88,7 @@ namespace ProductService.Controllers
 
         // DELETE: api/Products/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Product>> DeleteProduct(Guid id)
+        public async Task<IActionResult> DeleteProduct(Guid id)
         {
             var product = await _context.Products.FindAsync(id);
             if (product == null)
@@ -99,7 +99,7 @@ namespace ProductService.Controllers
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();
 
-            return product;
+            return Ok(product);
         }
 
         private bool ProductExists(Guid id)

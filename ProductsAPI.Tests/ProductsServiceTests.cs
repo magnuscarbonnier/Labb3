@@ -99,7 +99,7 @@ namespace ProductsAPI.Tests
         }
 
         [Fact]
-        public async Task Change_product_returns_updated_product()
+        public async Task Change_product_returns_updated_productid()
         {
             // Create testproduct
             var product = new Product { Description = "Testbeksriv", ImgSrc = "imgsrc", Name = "Test", Price = 2.00M };
