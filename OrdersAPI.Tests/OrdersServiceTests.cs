@@ -102,6 +102,18 @@ namespace OrdersAPI.Tests
         }
 
         [Fact]
+        public async Task GetUserOrders_Returns_OK()
+        {
+            using (var client = new TestClientProvider().Client)
+            {
+                var orderResponse = await client.GetAsync($"/api/orders/user/{_fixture.order.UserId}");
+
+                Assert.Equal(HttpStatusCode.OK, orderResponse.StatusCode);
+           
+            }
+        }
+
+        [Fact]
         public async Task GetOrderById_Returns_Order()
         {
             using (var client = new TestClientProvider().Client)

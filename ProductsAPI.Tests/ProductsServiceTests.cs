@@ -99,7 +99,7 @@ namespace ProductsAPI.Tests
         }
 
         [Fact]
-        public async Task Change_product_returns_updated_productid()
+        public async Task Change_product_returns_updated_product()
         {
             // Create testproduct
             var product = new Product { Description = "Testbeksriv", ImgSrc = "imgsrc", Name = "Test", Price = 2.00M };
@@ -112,19 +112,20 @@ namespace ProductsAPI.Tests
                 var response = await client.PostAsync("/api/products/", content);
                 var newProduct = await JsonHandler.Deserialize<Product>(response);
 
+                //change products name
                 newProduct.Name = "changednametest";
+
                 json = JsonHandler.Serialize<Product>(newProduct);
                 content = new StringContent(json, Encoding.UTF8, "application/json");
-
+                //put product
                 response = await client.PutAsync($"/api/products/{newProduct.Id}", content);
                 var updatedProduct = await JsonHandler.Deserialize<Product>(response);
 
+                //delete product
+                var deleteresponse = await client.DeleteAsync($"/api/products/{newProduct.Id}");
 
                 Assert.NotNull(updatedProduct);
-                Assert.Equal(newProduct.Name, updatedProduct.Name);
-
-                //cleanup
-                var deleteresponse = await client.DeleteAsync($"/api/products/{newProduct.Id}");
+                Assert.Equal(newProduct.Name, updatedProduct.Name); 
             }
         }
 
@@ -139,21 +140,16 @@ namespace ProductsAPI.Tests
                 var json = JsonHandler.Serialize<Product>(product);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
+                //add product
                 var response = await client.PostAsync("/api/products/", content);
                 var newProduct = await JsonHandler.Deserialize<Product>(response);
+                //delete product
                 var deleteresponse = await client.DeleteAsync($"/api/products/{newProduct.Id}");
-   
-                
                 var deletedProduct = await JsonHandler.Deserialize<Product>(deleteresponse);
-
 
                 Assert.NotEqual(Guid.Empty,deletedProduct.Id);
                 Assert.Equal(newProduct.Id, deletedProduct.Id);
-
-                
             }
-            
-           
         }
     }
 }
