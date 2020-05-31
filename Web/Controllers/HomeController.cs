@@ -6,21 +6,28 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Web.Models;
+using Web.Services;
+using Web.ViewModels;
 
 namespace Web.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IProductService _productService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IProductService productService)
         {
             _logger = logger;
+            _productService = productService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            ProductViewModel vm = new ProductViewModel();
+            var products = await _productService.GetAll();
+            vm.Products = products;
+            return View(vm);
         }
 
         public IActionResult Privacy()
