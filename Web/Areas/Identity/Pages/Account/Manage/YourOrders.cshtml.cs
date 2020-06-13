@@ -31,20 +31,20 @@ namespace Web.Areas.Identity.Pages.Account.Manage
 
 
         public List<Order> Orders = new List<Order>();
-        public void OnGet()
+        public async Task OnGet()
         {
             var userId = _userManager.GetUserId(User);
             string token = "";
             if(User.Identity.IsAuthenticated)
             {
-                var user = _userManager.GetUserAsync(User);
-                token = GenerateJSONWebToken(user.Result);
+                var user = await _userManager.GetUserAsync(User);
+                token = GenerateJSONWebToken(user);
             }
-            var orders = _orderService.GetUserOrders(userId,token);
-
-            if (orders != null)
+            var orders =await _orderService.GetUserOrders(userId,token);
+        
+            if (orders != null && orders.Any())
             {
-                Orders = orders.Result.ToList();
+                Orders = orders.ToList();
             }
         }
         private string GenerateJSONWebToken(ApplicationUser user)
@@ -54,11 +54,11 @@ namespace Web.Areas.Identity.Pages.Account.Manage
             };
 
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetValue<string>("JWT:Secret")));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512);
 
             var token = new JwtSecurityToken(
-                issuer: "https://www.yogihosting.com",
-                audience: "https://www.yogihosting.com",
+                issuer: "https://localhost:44344/",
+                audience: "https://localhost:44344/",
                 expires: DateTime.Now.AddMinutes(3),
                 signingCredentials: credentials,
                 claims: claims

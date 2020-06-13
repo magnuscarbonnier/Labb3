@@ -44,8 +44,8 @@ namespace OrdersAPI
                 {
                     ValidateIssuer = true,
                     ValidateAudience = true,
-                    ValidAudience = "https://www.yogihosting.com",
-                    ValidIssuer = "https://www.yogihosting.com",
+                    ValidAudience = "https://localhost:44344/",
+                    ValidIssuer = "https://localhost:44344/",
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetValue<string>("JWT:Secret")))
                 };
             });
