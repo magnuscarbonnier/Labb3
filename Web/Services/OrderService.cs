@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Web.Models;
 using Web.ViewModels;
@@ -22,10 +23,11 @@ namespace Web.Services
         }
 
         [Authorize]
-        public async Task<Guid> PlaceOrder(string userId, Order order, ISession session)
+        public async Task<Guid> PlaceOrder(string userId, Order order, ISession session,string token)
         {
             if (userId != null && order != null && order.UserId == userId)
             {
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 var JSON = JsonConvert.SerializeObject(order);
                 var orderContent = new StringContent(JSON, System.Text.Encoding.UTF8, "application/json");
                 var response = await _httpClient.PostAsync(apiaddress, orderContent);
@@ -41,8 +43,9 @@ namespace Web.Services
             return Guid.Empty;
         }
 
-        public async Task<Order> GetOrderById(Guid orderId)
+        public async Task<Order> GetOrderById(Guid orderId,string token)
         {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var response = await _httpClient.GetAsync(apiaddress + $"/{orderId}");
             response.EnsureSuccessStatusCode();
             var orderresponse = await response.Content.ReadAsStringAsync();
@@ -50,7 +53,7 @@ namespace Web.Services
             return order;
         }
 
-        public List<Order> GetOrders(string userId, ISession session)
+        public List<Order> GetOrders(string userId, ISession session, string token)
         {
             var existingOrders = session.Get<List<Order>>(Lib.SessionKeyOrderList);
             var orders = new List<Order>();
@@ -63,8 +66,11 @@ namespace Web.Services
             return orders;
         }
 
-        public async Task<IEnumerable<Order>> GetUserOrders(string userid)
+        public async Task<IEnumerable<Order>> GetUserOrders(string userid, string token)
         {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                
+          
             var response = await _httpClient.GetAsync(apiaddress+$"/user/{userid}");
             response.EnsureSuccessStatusCode();
             var ordersresponse = await response.Content.ReadAsStringAsync();

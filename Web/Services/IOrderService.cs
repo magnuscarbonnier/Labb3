@@ -9,9 +9,9 @@ namespace Web.Services
 {
     public interface IOrderService
     {
-        List<Order> GetOrders(string userId, ISession session);
-        Task<Guid> PlaceOrder(string userId, Order order, ISession session);
-        Task<Order> GetOrderById(Guid orderId);
-        Task<IEnumerable<Order>> GetUserOrders(string userid);
+        List<Order> GetOrders(string userId, ISession session, string token);
+        Task<Guid> PlaceOrder(string userId, Order order, ISession session, string token);
+        Task<Order> GetOrderById(Guid orderId, string token);
+        Task<IEnumerable<Order>> GetUserOrders(string userid, string token);
     }
 }

@@ -1,10 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using Web.Models;
 using Web.Services;
@@ -18,13 +23,15 @@ namespace Web.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private IOrderService _orderService;
         private readonly ICartService _cartService;
+        private readonly IConfiguration _configuration;
 
-        public OrderController(IProductService productService, UserManager<ApplicationUser> userManager, IOrderService orderService, ICartService cartService)
+        public OrderController(IConfiguration configuration, IProductService productService, UserManager<ApplicationUser> userManager, IOrderService orderService, ICartService cartService)
         {
             _productService = productService;
             _userManager = userManager;
             _orderService = orderService;
             _cartService = cartService;
+            _configuration = configuration;
         }
 
         [Authorize]
@@ -33,9 +40,14 @@ namespace Web.Controllers
         {
             CartViewModel vm = new CartViewModel();
             var user = await _userManager.GetUserAsync(User);
-
+            
             var cart = _cartService.GetCart(user.Id, HttpContext.Session);
 
+            string token = "";
+            if(User.Identity.IsAuthenticated)
+            {
+                token = GenerateJSONWebToken(user);
+            }
 
             if (cart == null)
             {
@@ -59,7 +71,13 @@ namespace Web.Controllers
                 TempData["Error"] = Lib.OrderNotGet;
                 return RedirectToAction("Index", "Product");
             }
-            var order = await _orderService.GetOrderById(id);
+            string token = "";
+            if (User.Identity.IsAuthenticated)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                token = GenerateJSONWebToken(user);
+            }
+            var order = await _orderService.GetOrderById(id, token);
 
             return View(order);
         }
@@ -74,10 +92,15 @@ namespace Web.Controllers
             var userId = _userManager.GetUserId(User);
             vm.cart = _cartService.GetCart(userId, HttpContext.Session);
             var order = CartToOrder(vm);
-
+            string token = "";
+            if (User.Identity.IsAuthenticated)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                token = GenerateJSONWebToken(user);
+            }
             if (order != null && order.UserId == userId && vm.cart.CartItems.Count > 0)
             {
-                var orderid = await _orderService.PlaceOrder(userId, order, HttpContext.Session);
+                var orderid = await _orderService.PlaceOrder(userId, order, HttpContext.Session, token);
 
                 return RedirectToAction("Details", "Order", new { id = orderid });
             }
@@ -143,6 +166,25 @@ namespace Web.Controllers
                 UserId = vm.Order.UserId,
                 Status = Lib.Status.Beställd
             };
+        }
+        private string GenerateJSONWebToken(ApplicationUser user)
+        {
+            var claims = new[] {
+                new Claim(JwtRegisteredClaimNames.Email, $"{user.Email}")
+            };
+
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetValue<string>("JWT:Secret")));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: "https://www.yogihosting.com",
+                audience: "https://www.yogihosting.com",
+                expires: DateTime.Now.AddMinutes(3),
+                signingCredentials: credentials,
+                claims: claims
+                );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }
