@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyModel;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using OrdersAPI.Models;
 using System;
 using System.Collections.Generic;

@@ -75,6 +75,7 @@ namespace Web
             app.UseCookiePolicy();//added
             app.UseRouting();
 
+            app.UseCors();
 
             app.UseAuthentication();
             app.UseAuthorization();
