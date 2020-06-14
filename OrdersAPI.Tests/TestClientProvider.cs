@@ -25,7 +25,7 @@ namespace OrdersAPI.Tests
 
             WebHostBuilder webHostBuilder = new WebHostBuilder();
             webHostBuilder.ConfigureServices(s => s.AddDbContext<OrdersContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("OrdersConnection"))));
+                options.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=OrdersMCB;Trusted_Connection=True;MultipleActiveResultSets=true")));
 
             webHostBuilder.UseStartup<Startup>();
 
