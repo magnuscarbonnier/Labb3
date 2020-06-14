@@ -301,7 +301,6 @@ namespace OrdersAPI.Tests
                 //delete testorder
                 HttpRequestMessage request = new HttpRequestMessage
                 {
-                    Content = content,
                     Method = HttpMethod.Delete,
                     RequestUri = new Uri($"https://localhost:44328/api/orders/{order.Id}")
                 };
@@ -374,7 +373,7 @@ namespace OrdersAPI.Tests
                     Method = HttpMethod.Delete,
                     RequestUri = new Uri($"https://localhost:44328/api/orders/{order.Id}")
                 };
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _fixture.token);
+                deleterequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _fixture.token);
                 var deleteResponse = await client.SendAsync(deleterequest);
                 
                 Assert.Equal(HttpStatusCode.Created, postresponse.StatusCode);
