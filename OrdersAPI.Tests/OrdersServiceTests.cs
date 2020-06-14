@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -25,7 +26,14 @@ namespace OrdersAPI.Tests
         {
             using (var client = new TestClientProvider().Client)
             {
-                var response = await client.GetAsync("/api/orders");
+                HttpRequestMessage request = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Get,
+                    RequestUri = new Uri("https://localhost:44328/api/orders/")
+                };
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _fixture.token);
+
+                var response = await client.SendAsync(request);
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             }
         }
@@ -35,8 +43,14 @@ namespace OrdersAPI.Tests
         {
             using (var client = new TestClientProvider().Client)
             {
-                var response = await client.GetAsync("/api/orders");
-                var orderResponse = await response.Content.ReadAsStringAsync();
+                HttpRequestMessage request = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Get,
+                    RequestUri = new Uri("https://localhost:44328/api/orders/")
+                };
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _fixture.token);
+                var response = client.SendAsync(request);
+                var orderResponse = await response.Result.Content.ReadAsStringAsync();
                 var orders = JsonConvert.DeserializeObject<IEnumerable<Order>>(orderResponse);
 
                 foreach (var order in orders)
@@ -54,7 +68,13 @@ namespace OrdersAPI.Tests
         {
             using (var client = new TestClientProvider().Client)
             {
-                var response = await client.GetAsync($"/api/orders/{Guid.Empty}");
+                HttpRequestMessage request = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Get,
+                    RequestUri = new Uri("https://localhost:44328/api/orders/"+Guid.Empty)
+                };
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _fixture.token);
+                var response = await client.SendAsync(request);
                 Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             }
         }
@@ -64,8 +84,15 @@ namespace OrdersAPI.Tests
         {
             using (var client = new TestClientProvider().Client)
             {
+
                 Guid guid = Guid.NewGuid();
-                var response = await client.GetAsync($"/api/orders/{guid}");
+                HttpRequestMessage request = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Get,
+                    RequestUri = new Uri("https://localhost:44328/api/orders/" + guid)
+                };
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _fixture.token);
+                var response = await client.SendAsync(request);
                 Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             }
         }
@@ -75,7 +102,13 @@ namespace OrdersAPI.Tests
         {
             using (var client = new TestClientProvider().Client)
             {
-                var response = await client.GetAsync($"/api/orders/1");
+                HttpRequestMessage request = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Get,
+                    RequestUri = new Uri("https://localhost:44328/api/orders/1")
+                };
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _fixture.token);
+                var response = await client.SendAsync(request);
                 Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             }
         }
@@ -86,7 +119,13 @@ namespace OrdersAPI.Tests
         {
             using (var client = new TestClientProvider().Client)
             {
-                var orderResponse = await client.GetAsync($"/api/orders/user/{_fixture.order.UserId}");
+                HttpRequestMessage request = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Get,
+                    RequestUri = new Uri($"https://localhost:44328/api/orders/user/{_fixture.order.UserId}")
+                };
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _fixture.token);
+                var orderResponse = await client.SendAsync(request);
 
                 using (var responseStream = await orderResponse.Content.ReadAsStreamAsync())
                 {
@@ -106,7 +145,13 @@ namespace OrdersAPI.Tests
         {
             using (var client = new TestClientProvider().Client)
             {
-                var orderResponse = await client.GetAsync($"/api/orders/user/{_fixture.order.UserId}");
+                HttpRequestMessage request = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Get,
+                    RequestUri = new Uri($"https://localhost:44328/api/orders/user/{_fixture.order.UserId}")
+                };
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _fixture.token);
+                var orderResponse = await client.SendAsync(request);
 
                 Assert.Equal(HttpStatusCode.OK, orderResponse.StatusCode);
            
@@ -118,7 +163,13 @@ namespace OrdersAPI.Tests
         {
             using (var client = new TestClientProvider().Client)
             {
-                var orderResponse = await client.GetAsync($"/api/orders/{_fixture.order.Id}");
+                HttpRequestMessage request = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Get,
+                    RequestUri = new Uri($"https://localhost:44328/api/orders/{_fixture.order.Id}")
+                };
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _fixture.token);
+                var orderResponse = await client.SendAsync(request);
 
                 using (var responseStream = await orderResponse.Content.ReadAsStreamAsync())
                 {
@@ -143,9 +194,16 @@ namespace OrdersAPI.Tests
                 HttpContent content = new StringContent(payload, Encoding.UTF8, "application/json");
 
                 //put order
-                var putresponse = await client.PutAsync($"/api/orders/{order.Id}", content);
+                HttpRequestMessage request = new HttpRequestMessage
+                {
+                    Content=content,
+                    Method = HttpMethod.Put,
+                    RequestUri = new Uri($"https://localhost:44328/api/orders/{_fixture.order.Id}")
+                };
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _fixture.token);
+                var putResponse = await client.SendAsync(request);
                 
-                var orderResponse = await putresponse.Content.ReadAsStringAsync();
+                var orderResponse = await putResponse.Content.ReadAsStringAsync();
                 var changedOrder = JsonConvert.DeserializeObject<Order>(orderResponse);
 
                 Assert.Equal(order.Status, changedOrder.Status);
@@ -164,9 +222,17 @@ namespace OrdersAPI.Tests
             {
                 var payload = JsonConvert.SerializeObject(order);
                 HttpContent content = new StringContent(payload, Encoding.UTF8, "application/json");
-                var deleteresponse = await client.PutAsync($"/api/orders/{guid}", content);
+                HttpRequestMessage request = new HttpRequestMessage
+                {
+                    Content = content,
+                    Method = HttpMethod.Put,
+                    RequestUri = new Uri($"https://localhost:44328/api/orders/{_fixture.order.Id}")
+                };
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _fixture.token);
+                var putResponse = await client.SendAsync(request);
+         
 
-                Assert.Equal(HttpStatusCode.BadRequest, deleteresponse.StatusCode);
+                Assert.Equal(HttpStatusCode.BadRequest, putResponse.StatusCode);
             }
         }
 
@@ -182,9 +248,17 @@ namespace OrdersAPI.Tests
                 HttpContent content = new StringContent(payload, Encoding.UTF8, "application/json");
 
                 //put order
-                var putresponse = await client.PutAsync($"/api/orders/{order.Id}", content);
+                HttpRequestMessage request = new HttpRequestMessage
+                {
+                    Content = content,
+                    Method = HttpMethod.Put,
+                    RequestUri = new Uri($"https://localhost:44328/api/orders/{_fixture.order.Id}")
+                };
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _fixture.token);
+                var putResponse = await client.SendAsync(request);
 
-                Assert.Equal(HttpStatusCode.OK, putresponse.StatusCode);
+
+                Assert.Equal(HttpStatusCode.OK, putResponse.StatusCode);
             }
         }
 
@@ -212,12 +286,28 @@ namespace OrdersAPI.Tests
                 HttpContent content = new StringContent(payload, Encoding.UTF8, "application/json");
 
                 //post testorder
-                var postresponse = await client.PostAsync($"/api/orders/", content);
-                var orderResponse = await postresponse.Content.ReadAsStringAsync();
+                HttpRequestMessage postrequest = new HttpRequestMessage
+                {
+                    Content = content,
+                    Method = HttpMethod.Post,
+                    RequestUri = new Uri($"https://localhost:44328/api/orders/")
+                };
+                postrequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _fixture.token);
+                var postResponse = await client.SendAsync(postrequest);
+
+                var orderResponse = await postResponse.Content.ReadAsStringAsync();
+
                 var order = JsonConvert.DeserializeObject<Order>(orderResponse);
                 //delete testorder
-                var deleteresponse= await client.DeleteAsync($"/api/orders/{order.Id}");
-                var deletedOrderResponse = await deleteresponse.Content.ReadAsStringAsync();
+                HttpRequestMessage request = new HttpRequestMessage
+                {
+                    Content = content,
+                    Method = HttpMethod.Delete,
+                    RequestUri = new Uri($"https://localhost:44328/api/orders/{order.Id}")
+                };
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _fixture.token);
+                var deleteResponse = await client.SendAsync(request);
+                var deletedOrderResponse = await deleteResponse.Content.ReadAsStringAsync();
                 var deletedOrderId = JsonConvert.DeserializeObject<Guid>(deletedOrderResponse);
 
                 Assert.Equal(order.Id, deletedOrderId);
@@ -231,9 +321,15 @@ namespace OrdersAPI.Tests
 
             using (var client = new TestClientProvider().Client)
             {
-                var deleteresponse = await client.DeleteAsync($"/api/orders/{emptyGuid}");
+                HttpRequestMessage request = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Delete,
+                    RequestUri = new Uri($"https://localhost:44328/api/orders/{emptyGuid}")
+                };
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _fixture.token);
+                var deleteResponse = await client.SendAsync(request);
              
-                Assert.Equal(HttpStatusCode.NotFound, deleteresponse.StatusCode);
+                Assert.Equal(HttpStatusCode.NotFound, deleteResponse.StatusCode);
             }
         }
 
@@ -261,12 +357,25 @@ namespace OrdersAPI.Tests
                 HttpContent content = new StringContent(payload, Encoding.UTF8, "application/json");
 
                 //post testorder
-                var postresponse = await client.PostAsync($"/api/orders/", content);
+                HttpRequestMessage request = new HttpRequestMessage
+                {
+                    Content = content,
+                    Method = HttpMethod.Post,
+                    RequestUri = new Uri($"https://localhost:44328/api/orders/")
+                };
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _fixture.token);
+                var postresponse = await client.SendAsync(request);
 
                 var orderResponse = await postresponse.Content.ReadAsStringAsync();
                 var order = JsonConvert.DeserializeObject<Order>(orderResponse);
                 //delete testorder
-                var deleteresponse = await client.DeleteAsync($"/api/orders/{order.Id}");
+                HttpRequestMessage deleterequest = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Delete,
+                    RequestUri = new Uri($"https://localhost:44328/api/orders/{order.Id}")
+                };
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _fixture.token);
+                var deleteResponse = await client.SendAsync(deleterequest);
                 
                 Assert.Equal(HttpStatusCode.Created, postresponse.StatusCode);
             }

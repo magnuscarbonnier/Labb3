@@ -38,23 +38,21 @@ namespace OrdersAPI
             })
             .AddJwtBearer(options =>
             {
-                options.SaveToken = true;
-                options.RequireHttpsMetadata = false;
+                
                 options.TokenValidationParameters = new TokenValidationParameters()
                 {
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidAudience = "https://localhost:44344/",
                     ValidIssuer = "https://localhost:44344/",
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetValue<string>("JWT:Secret")))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("MySuperdupersecretPassword2000"))
                 };
             });
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
             services.AddDbContext<OrdersContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("OrdersConnection")));
+                options.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=OrdersMCB;Trusted_Connection=True;MultipleActiveResultSets=true"));
 
         }
 
