@@ -8,7 +8,6 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Web.Models;
-using Web.ViewModels;
 
 namespace Web.Services
 {
@@ -23,7 +22,7 @@ namespace Web.Services
         }
 
         [Authorize]
-        public async Task<Guid> PlaceOrder(string userId, Order order, ISession session,string token)
+        public async Task<Guid> PlaceOrder(string userId, Order order, ISession session, string token)
         {
             if (userId != null && order != null && order.UserId == userId)
             {
@@ -43,7 +42,7 @@ namespace Web.Services
             return Guid.Empty;
         }
 
-        public async Task<Order> GetOrderById(Guid orderId,string token)
+        public async Task<Order> GetOrderById(Guid orderId, string token)
         {
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var response = await _httpClient.GetAsync(apiaddress + $"/{orderId}");
@@ -69,8 +68,8 @@ namespace Web.Services
         public async Task<IEnumerable<Order>> GetUserOrders(string userid, string token)
         {
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                
-            var response = await _httpClient.GetAsync(apiaddress+$"/user/{userid}");
+
+            var response = await _httpClient.GetAsync(apiaddress + $"/user/{userid}");
             response.EnsureSuccessStatusCode();
             var ordersresponse = await response.Content.ReadAsStringAsync();
             var orders = JsonConvert.DeserializeObject<IEnumerable<Order>>(ordersresponse);

@@ -71,7 +71,7 @@ namespace OrdersAPI.Tests
                 HttpRequestMessage request = new HttpRequestMessage
                 {
                     Method = HttpMethod.Get,
-                    RequestUri = new Uri("https://localhost:44328/api/orders/"+Guid.Empty)
+                    RequestUri = new Uri("https://localhost:44328/api/orders/" + Guid.Empty)
                 };
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _fixture.token);
                 var response = await client.SendAsync(request);
@@ -131,11 +131,11 @@ namespace OrdersAPI.Tests
                 {
                     var orders = await System.Text.Json.JsonSerializer.DeserializeAsync<IEnumerable<Order>>(responseStream,
                         new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
-                    foreach(var order in orders)
+                    foreach (var order in orders)
                     {
                         Assert.Equal(_fixture.order.UserId, order.UserId);
                     }
-                    
+
                 }
             }
         }
@@ -154,7 +154,7 @@ namespace OrdersAPI.Tests
                 var orderResponse = await client.SendAsync(request);
 
                 Assert.Equal(HttpStatusCode.OK, orderResponse.StatusCode);
-           
+
             }
         }
 
@@ -196,13 +196,13 @@ namespace OrdersAPI.Tests
                 //put order
                 HttpRequestMessage request = new HttpRequestMessage
                 {
-                    Content=content,
+                    Content = content,
                     Method = HttpMethod.Put,
                     RequestUri = new Uri($"https://localhost:44328/api/orders/{_fixture.order.Id}")
                 };
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _fixture.token);
                 var putResponse = await client.SendAsync(request);
-                
+
                 var orderResponse = await putResponse.Content.ReadAsStringAsync();
                 var changedOrder = JsonConvert.DeserializeObject<Order>(orderResponse);
 
@@ -230,7 +230,7 @@ namespace OrdersAPI.Tests
                 };
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _fixture.token);
                 var putResponse = await client.SendAsync(request);
-         
+
 
                 Assert.Equal(HttpStatusCode.BadRequest, putResponse.StatusCode);
             }
@@ -327,7 +327,7 @@ namespace OrdersAPI.Tests
                 };
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _fixture.token);
                 var deleteResponse = await client.SendAsync(request);
-             
+
                 Assert.Equal(HttpStatusCode.NotFound, deleteResponse.StatusCode);
             }
         }
@@ -375,7 +375,7 @@ namespace OrdersAPI.Tests
                 };
                 deleterequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _fixture.token);
                 var deleteResponse = await client.SendAsync(deleterequest);
-                
+
                 Assert.Equal(HttpStatusCode.Created, postresponse.StatusCode);
             }
         }

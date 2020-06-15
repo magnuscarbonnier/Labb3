@@ -38,10 +38,10 @@ namespace OrdersAPI.Tests
                     LastName = "Testefternamn",
                     OrderDate = DateTime.Now,
                     Phone = "000011111",
-                    ZipCode="29281",
+                    ZipCode = "29281",
                     Status = Status.Beställd,
                     UserId = Guid.NewGuid().ToString(),
-                    OrderItems=new List<OrderItem> {new OrderItem { Name = "Testprodukt", Price = 98.00M, ProductId=Guid.NewGuid(), Quantity=3} }
+                    OrderItems = new List<OrderItem> { new OrderItem { Name = "Testprodukt", Price = 98.00M, ProductId = Guid.NewGuid(), Quantity = 3 } }
                 };
                 var payload = new StringContent(JsonConvert.SerializeObject(testOrder), Encoding.UTF8, "application/json");
                 HttpRequestMessage request = new HttpRequestMessage
@@ -51,7 +51,7 @@ namespace OrdersAPI.Tests
                     RequestUri = new Uri("https://localhost:44328/api/orders/")
                 };
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                
+
                 var response = await client.SendAsync(request);
 
                 var responseOrder = await response.Content.ReadAsStringAsync();
@@ -68,7 +68,7 @@ namespace OrdersAPI.Tests
                 HttpRequestMessage request = new HttpRequestMessage
                 {
                     Method = HttpMethod.Delete,
-                    RequestUri = new Uri("https://localhost:44328/api/orders/"+order.Id)
+                    RequestUri = new Uri("https://localhost:44328/api/orders/" + order.Id)
                 };
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 var deleteResponse = await client.SendAsync(request);

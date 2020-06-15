@@ -3,9 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -40,11 +38,11 @@ namespace Web.Controllers
         {
             CartViewModel vm = new CartViewModel();
             var user = await _userManager.GetUserAsync(User);
-            
+
             var cart = _cartService.GetCart(user.Id, HttpContext.Session);
 
             string token = "";
-            if(User.Identity.IsAuthenticated)
+            if (User.Identity.IsAuthenticated)
             {
                 token = GenerateJSONWebToken(user);
             }
@@ -87,7 +85,7 @@ namespace Web.Controllers
         public async Task<IActionResult> Checkout(CartViewModel vm)
         {
             if (!ModelState.IsValid)
-                return RedirectToAction("Index","Cart") ;
+                return RedirectToAction("Index", "Cart");
 
             var userId = _userManager.GetUserId(User);
             vm.cart = _cartService.GetCart(userId, HttpContext.Session);

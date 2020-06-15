@@ -1,6 +1,4 @@
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -35,13 +33,13 @@ namespace Web.Areas.Identity.Pages.Account.Manage
         {
             var userId = _userManager.GetUserId(User);
             string token = "";
-            if(User.Identity.IsAuthenticated)
+            if (User.Identity.IsAuthenticated)
             {
                 var user = await _userManager.GetUserAsync(User);
                 token = GenerateJSONWebToken(user);
             }
-            var orders =await _orderService.GetUserOrders(userId,token);
-        
+            var orders = await _orderService.GetUserOrders(userId, token);
+
             if (orders != null && orders.Any())
             {
                 Orders = orders.ToList();

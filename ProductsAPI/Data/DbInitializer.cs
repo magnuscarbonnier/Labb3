@@ -1,9 +1,7 @@
 ﻿using ProductService;
 using ProductService.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace ProductsAPI.Data
 {
@@ -76,9 +74,9 @@ namespace ProductsAPI.Data
             }
 
             };
-            
 
-            foreach(Product product in products)
+
+            foreach (Product product in products)
             {
                 context.Products.Add(product);
             }

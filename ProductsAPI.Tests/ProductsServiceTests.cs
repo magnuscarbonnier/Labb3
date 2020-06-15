@@ -1,9 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
-using ProductService.Models;
+﻿using ProductService.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -66,7 +62,7 @@ namespace ProductsAPI.Tests
             {
                 var productsResponse = await client.GetAsync($"/api/products/{_fixture.product.Id}");
 
-                using(var responseStream=await productsResponse.Content.ReadAsStreamAsync())
+                using (var responseStream = await productsResponse.Content.ReadAsStreamAsync())
                 {
                     var product = await System.Text.Json.JsonSerializer.DeserializeAsync<Product>(responseStream,
                         new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
@@ -81,7 +77,7 @@ namespace ProductsAPI.Tests
         {
             // Create testproduct
             var product = new Product { Description = "Testbeksriv", ImgSrc = "imgsrc", Name = "Test", Price = 2.00M };
-            
+
             using (var client = new TestClientProvider().Client)
             {
                 var json = JsonHandler.Serialize<Product>(product);
@@ -89,12 +85,12 @@ namespace ProductsAPI.Tests
 
                 var response = await client.PostAsync("/api/products/", content);
                 var newProduct = await JsonHandler.Deserialize<Product>(response);
-                
+
                 Assert.NotNull(newProduct);
                 Assert.NotEqual(Guid.Empty, newProduct.Id);
-                
+
                 //cleanup
-                var deleteresponse=await client.DeleteAsync($"/api/products/{newProduct.Id}");
+                var deleteresponse = await client.DeleteAsync($"/api/products/{newProduct.Id}");
             }
         }
 
@@ -125,7 +121,7 @@ namespace ProductsAPI.Tests
                 var deleteresponse = await client.DeleteAsync($"/api/products/{newProduct.Id}");
 
                 Assert.NotNull(updatedProduct);
-                Assert.Equal(newProduct.Name, updatedProduct.Name); 
+                Assert.Equal(newProduct.Name, updatedProduct.Name);
             }
         }
 
@@ -147,7 +143,7 @@ namespace ProductsAPI.Tests
                 var deleteresponse = await client.DeleteAsync($"/api/products/{newProduct.Id}");
                 var deletedProduct = await JsonHandler.Deserialize<Product>(deleteresponse);
 
-                Assert.NotEqual(Guid.Empty,deletedProduct.Id);
+                Assert.NotEqual(Guid.Empty, deletedProduct.Id);
                 Assert.Equal(newProduct.Id, deletedProduct.Id);
             }
         }
