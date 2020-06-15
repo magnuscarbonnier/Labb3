@@ -70,7 +70,6 @@ namespace Web.Services
         {
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 
-          
             var response = await _httpClient.GetAsync(apiaddress+$"/user/{userid}");
             response.EnsureSuccessStatusCode();
             var ordersresponse = await response.Content.ReadAsStringAsync();
